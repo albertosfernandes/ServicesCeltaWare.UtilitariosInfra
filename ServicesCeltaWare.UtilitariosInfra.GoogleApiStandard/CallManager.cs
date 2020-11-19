@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ServicesCeltaWare.UtilitariosInfra
 {
@@ -46,7 +47,7 @@ namespace ServicesCeltaWare.UtilitariosInfra
             });
         }
 
-        public static void Upload(string _fileNameFull)
+        public static async Task<bool> Upload(string _fileNameFull)
         {
             try
             {
@@ -64,10 +65,15 @@ namespace ServicesCeltaWare.UtilitariosInfra
                         request.Upload();
                     }
                 }
+
+                if (!string.IsNullOrEmpty(status))
+                    return false;
+
+                return true;
             }
             catch(Exception err)
             {
-                throw err;
+                return false;
             }
                         
         }        
