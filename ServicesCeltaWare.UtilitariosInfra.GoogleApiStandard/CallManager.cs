@@ -1,5 +1,8 @@
-﻿using System;
+﻿using HeyRed.Mime;
+using MimeKit;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -43,11 +46,38 @@ namespace ServicesCeltaWare.UtilitariosInfra
             });
         }
 
+        public static void Upload(string _fileNameFull)
+        {
+            try
+            {
+                string status = null;
+                GoogleApiStandard.Security s = new GoogleApiStandard.Security("MyProject-7b475b0565ef.json");
+                var credenciais = s.Auth(out status);
+                using (var service = OpenService(credenciais))
+                {
+                    var arquivo = new Google.Apis.Drive.v3.Data.File();
+                    arquivo.Name = System.IO.Path.GetFileName(_fileNameFull);
+                    arquivo.MimeType = MimeTypesMap.GetMimeType(System.IO.Path.GetExtension(_fileNameFull));
+                    using (var stream = new System.IO.FileStream(_fileNameFull, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                    {
+                        var request = service.Files.Create(arquivo, stream, arquivo.MimeType);
+                        request.Upload();
+                    }
+                }
+            }
+            catch(Exception err)
+            {
+                throw err;
+            }
+                        
+        }        
+
         public static IList<string> ListFilesInFolder(string folderId)
         {
 
             string status = null;
-            var credenciais = GoogleApiStandard.Security.Auth(out status);
+            GoogleApiStandard.Security s = new GoogleApiStandard.Security("MyProject-7b475b0565ef.json");
+            var credenciais = s.Auth(out status);
             List<string> lista = new List<string>();
 
             using (var servico = OpenService(credenciais))
@@ -75,7 +105,8 @@ namespace ServicesCeltaWare.UtilitariosInfra
         {
             string status = null;
             List<string> lista = new List<string>();
-            var credenciais = GoogleApiStandard.Security.Auth(out status);
+            GoogleApiStandard.Security s = new GoogleApiStandard.Security("MyProject-7b475b0565ef.json");
+            var credenciais = s.Auth(out status);
 
             using (var servico = OpenService(credenciais))
             {
