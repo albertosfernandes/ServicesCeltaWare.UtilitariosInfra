@@ -1,7 +1,13 @@
-﻿using System;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
+using Google.Apis.Plus.v1;
+using Google.Apis.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ServicesCeltaWare.UtilitariosInfra.GoogleApiStandard
 {
@@ -13,32 +19,33 @@ namespace ServicesCeltaWare.UtilitariosInfra.GoogleApiStandard
             _credentialFileName = credentialFileName;
         }
 
-        public Google.Apis.Auth.OAuth2.UserCredential Auth(out string status)
+        public ServiceAccountCredential AuthenticateServiceAccount(string serviceAccountEmail)
         {
-            Google.Apis.Auth.OAuth2.UserCredential credential;
-            status = null;
             try
             {
-                using (var stream = new System.IO.FileStream(_credentialFileName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-                {
-                    var diretorioAtual = System.IO.Path.GetDirectoryName(Directory.GetCurrentDirectory());
-                    var diretorioCredenciais = System.IO.Path.Combine(diretorioAtual, "credential");
+                string[] scopes = new string[] { DriveService.Scope.Drive };
 
-                    credential = Google.Apis.Auth.OAuth2.GoogleWebAuthorizationBroker.AuthorizeAsync(
-                        Google.Apis.Auth.OAuth2.GoogleClientSecrets.Load(stream).Secrets,
-                        new[] { Google.Apis.Drive.v3.DriveService.Scope.DriveReadonly },
-                        "user",
-                        System.Threading.CancellationToken.None,
-                        new Google.Apis.Util.Store.FileDataStore(diretorioCredenciais, true)).Result;
-                }
+                var certificate = new X509Certificate2(_credentialFileName, "notasecret", X509KeyStorageFlags.Exportable);
+
+                ServiceAccountCredential credential = new ServiceAccountCredential(
+                    new ServiceAccountCredential.Initializer(serviceAccountEmail)
+                    {
+                        Scopes = scopes
+                    }.FromCertificate(certificate));
+
+                //DriveService service = new DriveService(new BaseClientService.Initializer()
+                //{
+                //    HttpClientInitializer = credential,
+                //    ApplicationName = "ServicesCeltaInfra"
+                //});
+
                 return credential;
             }
             catch (Exception err)
             {
-                status = err.Message;
-                credential = null;
-                return credential;
+                HelperLogs.WriteLog(err.Message + "\br" + err.StackTrace);
+                throw err;
             }
-        }
+        }      
     }
 }
