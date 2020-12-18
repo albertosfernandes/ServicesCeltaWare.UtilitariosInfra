@@ -9,4 +9,9 @@
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.49.0.2166" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ServicesCeltaWare.UtilitariosInfra.GoogleApiStandard\ServicesCeltaWare.UtilitariosInfra.GoogleApiStandard.csproj" />
+    <ProjectReference Include="..\ServicesCeltaWare.UtilitariosInfra.Telegram\ServicesCeltaWare.UtilitariosInfra.Telegram.csproj" />
+  </ItemGroup>
+
 </Project>

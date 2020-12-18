@@ -5,12 +5,10 @@ using Google.Apis.Services;
 
 using Google.Apis.Auth.OAuth2;
 
-
 using HeyRed.Mime;
 using MimeKit;
 using Newtonsoft.Json;
 using RestSharp;
-using ServicesCeltaWare.Security;
 using ServicesCeltaWare.UtilitariosInfra.GoogleApiStandard;
 using System;
 using System.Collections.Generic;
@@ -33,6 +31,21 @@ namespace ServicesCeltaWare.UtilitariosInfra.GoogleApiStandard
         {
             googleDrive = _googleDrive;
             client.Timeout = TimeSpan.FromHours(4);
+        }
+
+        private static DriveService InitGDriveComputer(UserCredential credenciais)
+        {
+            try
+            {
+                return new Google.Apis.Drive.v3.DriveService(new Google.Apis.Services.BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credenciais
+                });
+            }
+            catch(Exception err)
+            {
+                throw err;
+            }
         }
 
         //private static Security security = new Security("servicesceltainfra-6f1e21301fbe.p12");        
@@ -705,12 +718,13 @@ namespace ServicesCeltaWare.UtilitariosInfra.GoogleApiStandard
         {
             try
             {
-                var personalToken = await GoogleToken.GetWithRSA256(_googleDrive.CredentialFileName);
+                // Erro ao descobrir quem é GoogleToken.GetWithRSA256
+                //var personalToken = await GoogleToken.GetWithRSA256(_googleDrive.CredentialFileName);
                 string postUri = "https://oauth2.googleapis.com/token";
 
                 var parameters = new Dictionary<string, string>();
                 parameters["grant_type"] = "urn:ietf:params:oauth:grant-type:jwt-bearer";
-                parameters["assertion"] = personalToken;
+                // parameters["assertion"] = personalToken;
 
                 //var values = new List<KeyValuePair<string, string>>();
 

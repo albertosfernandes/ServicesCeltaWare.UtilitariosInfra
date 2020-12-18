@@ -14,8 +14,4 @@
     <PackageReference Include="RestSharp" Version="106.11.7" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\ServicesCeltaWareApi\ServicesCeltaWare.Security\ServicesCeltaWare.Security.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ServicesCeltaWare.UtilitariosInfra.ConsoleGoogleApi": {
+      "commandName": "Project",
+      "commandLineArgs": "1 ServicesCeltaWareUtilitariosInfraConsoleGoogle.json CeltaBSAzukiBackupFullonE.bak c:\\\\temp\\\\backup\\\\ 1_KxAqePCZHji2GzJomTEpLjjIMCi_81P"
+    }
+  }
+}

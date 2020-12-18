@@ -47,5 +47,33 @@ namespace ServicesCeltaWare.UtilitariosInfra.GoogleApiStandard
                 throw err;
             }
         }      
+
+        public UserCredential AuthenticateComputerAccount()
+        {
+            Google.Apis.Auth.OAuth2.UserCredential credenciais;
+
+            using (var stream = new System.IO.FileStream(_credentialFileName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            {
+                var diretorioAtual = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                var diretorioCredenciais = System.IO.Path.Combine(diretorioAtual, "credential");
+
+                credenciais = Google.Apis.Auth.OAuth2.GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    Google.Apis.Auth.OAuth2.GoogleClientSecrets.Load(stream).Secrets,
+                    new[] { Google.Apis.Drive.v3.DriveService.Scope.Drive },
+                    "user",
+                    System.Threading.CancellationToken.None,
+                    new Google.Apis.Util.Store.FileDataStore(diretorioCredenciais, true)).Result;
+            }
+
+            return credenciais;
+        }
+
+        public Google.Apis.Drive.v3.DriveService LoginComputerAccount(Google.Apis.Auth.OAuth2.UserCredential credenciais)
+        {
+            return new Google.Apis.Drive.v3.DriveService(new Google.Apis.Services.BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credenciais
+            });
+        }
     }
 }
